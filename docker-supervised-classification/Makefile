@@ -7,7 +7,7 @@ format:
 	black src/*.py
 
 lint:
-	pylint --disable=R,C src/model_training.py
+	pylint --disable=R,C src/model_training.py src/api.py
 
 test:  
 	python -m pytest -vv --cov=hello test_hello.py 
