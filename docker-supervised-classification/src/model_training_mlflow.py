@@ -15,12 +15,12 @@ def train_xgboost(X_train, y_train):
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, scoring='accuracy', verbose=2)
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
-    
-    with mlflow.start_run() as run:
+
+    run_name = "xgboost_run"
+    with mlflow.start_run(run_name=run_name) as run:
         mlflow.set_tag("model", "xgboost")
         mlflow.log_params(grid_search.best_params_)
-        mlflow.sklearn.log_model(best_model, "xgboost_model",
-                                 registered_model_name="xgboost_tracking")
+        mlflow.sklearn.log_model(best_model, "xgboost_model")
     
     return best_model, run.info.run_id
 
@@ -35,12 +35,12 @@ def train_random_forest(X_train, y_train):
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, scoring='accuracy', verbose=2)
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
-    
-    with mlflow.start_run() as run:
+
+    run_name = "random_forest_run"
+    with mlflow.start_run(run_name=run_name) as run:
         mlflow.set_tag("model", "random_forest")
         mlflow.log_params(grid_search.best_params_)
-        mlflow.sklearn.log_model(best_model, "random_forest_model",
-                                 registered_model_name="rf_tracking")
+        mlflow.sklearn.log_model(best_model, "random_forest_model")
     
     return best_model, run.info.run_id
 
@@ -54,12 +54,12 @@ def train_knn(X_train, y_train):
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, scoring='accuracy', verbose=2)
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
-    
-    with mlflow.start_run() as run:
+
+    run_name = "knn_run"
+    with mlflow.start_run(run_name=run_name) as run:
         mlflow.set_tag("model", "knn")
         mlflow.log_params(grid_search.best_params_)
-        mlflow.sklearn.log_model(best_model, "knn_model",
-                                 registered_model_name="knn_tracking")
+        mlflow.sklearn.log_model(best_model, "knn_model", registered_model_name="knn_tracking")
     
     return best_model, run.info.run_id
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     
 
     # Charger et prétraiter les données
-    data = load_data('https://raw.githubusercontent.com/lewishounkpevi/cours-datascience-end-to-end/main/docker-supervised-classification/data/diabetes.csv')
+    data = load_data("https://raw.githubusercontent.com/lewishounkpevi/cours-datascience-end-to-end/main/docker-supervised-classification/data/diabetes.csv")
     data = preprocess_data(data)
     X_train, X_test, y_train, y_test = split_data(data, target_column='Outcome')
 
@@ -76,3 +76,8 @@ if __name__ == "__main__":
     xgboost_model, xgboost_run_id = train_xgboost(X_train, y_train)
     rf_model, rf_run_id = train_random_forest(X_train, y_train)
     knn_model, knn_run_id = train_knn(X_train, y_train)
+
+    
+    # Visualiser les valeurs SHAP pour XGBoost
+    # plot_shap_values(xgboost_model, X_train, feature_names=X_train.columns)
+
